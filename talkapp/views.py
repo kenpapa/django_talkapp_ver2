@@ -67,8 +67,13 @@ def user_edit(request):
 @login_required(login_url='/getlogin/')
 def user_update(request):
     form = UserUpdateForm(request.POST, instance=request.user)
+    current_email = request.user.email
     if form.is_valid():
         user = form.save(commit=False)
+        if form.cleaned_data['email'] != '':
+            user.email = form.cleaned_data['email']
+        else:
+            user.email = current_email        
         if form.cleaned_data['password'] != '':
             password = form.cleaned_data['password']
             user.set_password(password)
